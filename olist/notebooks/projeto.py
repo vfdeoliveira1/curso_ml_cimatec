@@ -94,7 +94,7 @@ def carregar_e_validar(caminho_csv: str) -> pd.DataFrame:
 # --------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    from data_profiling import ProfileReport 
+    from data_profiling import ProfileReport  # mesmo import do código original
 
     caminho_entrada = "olist/data/raw/olist_orders_dataset.csv"
     caminho_saida = Path("olist/data/processed/relatorio.html")
