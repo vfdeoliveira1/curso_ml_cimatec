@@ -1,6 +1,12 @@
-import pandas as pd
 from pathlib import Path
+
 from loguru import logger
+import pandas as pd
+
+from module_olist.modeling.evaluate import evaluate_model
+from module_olist.modeling.split import split_data
+from module_olist.modeling.train import train_models
+
 
 def load_data(orders_path: Path, items_path: Path, customers_path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
@@ -59,7 +65,7 @@ def create_dataset(orders, items, customers) -> pd.DataFrame:
     )
     
     data = data.merge(
-        customers[["customer_id", "customer_city"]], on="customer_id", how="left", validate='many_to_many'
+        customers[["customer_id", "customer_state"]], on="customer_id", how="left", validate='many_to_many'
     )
 
     return data
@@ -103,6 +109,15 @@ def main():
         
         logger.info("Salvando o dataset final...")
         save_dataset(dataset_final, output_file)
+
+        logger.info("Dividindo os dados em treino e teste...")
+        X_train, X_test, y_train, y_test = split_data(dataset_final)
+
+        logger.info("Treinando os modelos...")
+        models = train_models(X_train, y_train)
+
+        logger.info("Avaliando os modelos...")
+        evaluate_model(models, X_test, y_test)
         
     except FileNotFoundError as e:
         logger.error(f"Arquivo não encontrado. Verifique se a pasta data/raw e os arquivos existem: {e}")
