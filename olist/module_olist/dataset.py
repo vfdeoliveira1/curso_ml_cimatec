@@ -1,6 +1,8 @@
-import pandas as pd
 from pathlib import Path
+
 from loguru import logger
+import pandas as pd
+
 
 def load_data(orders_path: Path, items_path: Path, customers_path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
@@ -58,17 +60,19 @@ def create_target(orders: pd.DataFrame) -> pd.DataFrame:
 
 
     # Apresenta a quantidade total de pedidos antes da aplicação dos filtros.
-    logger(f"Pedidos originais: {len(orders):,}")
+    logger.info(f"Pedidos originais: {len(orders):,}")
 
 
     # Apresenta quantos pedidos permaneceram no recorte histórico.
-    logger(f"Pedidos no recorte histórico: {len(delivered_orders):,}")
+    logger.info(
+        f"Pedidos no recorte histórico: {len(delivered_orders):,}"
+    )
 
 
     # Mostra a quantidade de pedidos em cada classe:
     # 0 = entregue no prazo;
     # 1 = entregue com atraso.
-    logger(
+    logger.info(
         delivered_orders["is_late"].value_counts(dropna=False)
     )
     
@@ -131,7 +135,10 @@ def create_dataset(orders, items, customers) -> pd.DataFrame:
     )
     
     data = data.merge(
-        customers[["customer_id", "customer_city"]], on="customer_id", how="left", validate='many_to_many'
+        customers[["customer_id", "customer_city", "customer_state"]],
+        on="customer_id",
+        how="left",
+        validate="many_to_many",
     )
 
     return data
