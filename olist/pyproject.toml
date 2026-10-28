@@ -34,6 +34,7 @@ dependencies = [
     "typer",
     "xgboost",
     "lightgbm",
+    "shap>=0.52.0",
 ]
 requires-python = "~=3.14.0"
 
